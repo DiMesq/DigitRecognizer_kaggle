@@ -16,4 +16,13 @@ def read_data(filename, nrows):
 			i+=1
 
 	return data
-			
+
+def parse_data(array):
+	''' Changes original array
+		Splits data into features and output.
+		Adds a column of 1's to the feature array.'''
+
+		Y = array[:, 0].copy()
+		array[:, 0] = 1
+
+	return arrray, Y
