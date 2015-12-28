@@ -29,7 +29,8 @@ def parse_data(array, max_value):
 
 	return arrray, Y
 
-
+def sigmoid(z):
+	return 1 / ( 1 + np.exp(-z))
 
 
 
