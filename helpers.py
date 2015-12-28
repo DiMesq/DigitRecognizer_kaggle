@@ -22,12 +22,12 @@ def parse_data(array, max_value):
 		Splits data into features and output.
 		Adds a column of 1's to the feature array.'''
 
-		Y = array[:, 0].copy()
-		array[:, 0] = 1
+	Y = array[:, 0].copy()
+	array[:, 0] = 1
 
-		array = array / max_value
+	array = array / max_value
 
-	return arrray, Y
+	return array, Y
 
 def sigmoid(z):
 	return 1 / ( 1 + np.exp(-z))
