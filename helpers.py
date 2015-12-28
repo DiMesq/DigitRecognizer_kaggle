@@ -8,7 +8,7 @@ def read_data(filename, nrows):
 		reader = csv.reader(csvfile)
 		next(reader) #skip header row
 
-		data = np.zeros( (nrows, 785), dtype=np.int16 )
+		data = np.zeros( (nrows, 785), dtype=np.float64 )
 		i = 0
 		for row in reader:
 			row_ints = [int(x) for x in row]
@@ -17,7 +17,7 @@ def read_data(filename, nrows):
 
 	return data
 
-def parse_data(array):
+def parse_data(array, max_value):
 	''' Changes original array
 		Splits data into features and output.
 		Adds a column of 1's to the feature array.'''
@@ -25,4 +25,13 @@ def parse_data(array):
 		Y = array[:, 0].copy()
 		array[:, 0] = 1
 
+		array = array / max_value
+
 	return arrray, Y
+
+
+
+
+
+
+
