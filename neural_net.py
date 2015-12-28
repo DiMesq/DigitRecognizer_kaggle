@@ -48,6 +48,18 @@ def neural_net(thetas, *args):
 			activations = sigmoid(Theta.dot(activations))
 			layer_outputs.append(activations)
 
+		# add this training example cost
+		output = layer_outputs[-1]
+		cost += np.sum( Y[i] * np.log(output) + (1 - Y[i]) * np.log(1 - output))
+
+
+	# add the regularization term to the cost 
+	thetas_cost = 0
+	for Theta in list_thetas:
+		thetas_cost += np.sum(Theta[:, 1:] ** 2) # removes the weights of the bias units
+
+	cost += (regula / (2 * m)) * thetas_cost 
+
 	return cost
 
 
