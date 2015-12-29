@@ -1,11 +1,17 @@
 from helpers import *
 from neural_net import *
 import numpy as np
+import scipy.optimize as sp
+import matplotlib.pyplot as plt
 
-N_TRAIN_EXAMPLES = 42000
-MAX_POSSIBLE_INPUT = 255
 
-train_set = read_data("train.csv", N_TRAIN_EXAMPLES)
+global iter_cost # stores the cost of the cost function on each iteration 
+global BEST_THETAS
+global TRAIN_DATA
+global N_TRAIN_EXAMPLES
+global MAX_POSSIBLE_INPUT
+
+train_set = read_pixel_data(TRAIN_DATA, N_TRAIN_EXAMPLES)
 
 train_X, train_Y = parse_data(train_set, MAX_POSSIBLE_INPUT)
 
@@ -14,9 +20,10 @@ train_X, train_Y = parse_data(train_set, MAX_POSSIBLE_INPUT)
 s1 = 784 + 1
 s2 = 15 + 1
 s3 = 10
+layers = [s1, s2, s3]
 
 EPSILON = 1 * 10**(-2)
-LAMBDA = 0.1
+LAMBDA = 0.001
 N_LAYERS = 3
 
 # init the layers weights (parameters) as random values between -eps and eps
@@ -25,20 +32,28 @@ Theta2 = 2 * EPSILON * np.random.random((s3, s2)) - EPSILON
 
 Matrix_Thetas = [Theta1, Theta2]
 
-
 # unroll thetas
-thetas = np.zeros( sum([x.size for x in Matrix_Thetas]) )
-index = 0
+thetas = []
 for i in range(N_LAYERS - 1):
-	Theta = Matrix_Thetas[i]
-	siz = Theta.size
-	thetas[index : index + siz] = Theta.flatten()
+	thetas += list(Matrix_Thetas[i].flatten().reshape(-1,))
 
-	index += siz
+optimize_theta = sp.minimize(net_cost_and_grad, 
+							 np.array(thetas), 
+							 (train_X, train_Y, LAMBDA, layers), 
+							 method='L-BFGS-B', 
+							 jac=True, 
+							 options={'disp':True})
 
-pred = neural_net(thetas, train_X, train_Y, LAMBDA, [s1, s2, s3])
+print(optimize_theta)
 
-print(pred)
+if (optimize_theta.success): write_data(list(optimize_theta.x), BEST_THETAS)
+
+plt.plot(iter_cost)
+
+
+
+
+
 
 
 
