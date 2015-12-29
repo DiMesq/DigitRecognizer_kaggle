@@ -5,8 +5,6 @@ import scipy.optimize as sp
 import matplotlib.pyplot as plt
 import settings as s
 
-global iter_cost # stores the cost of the cost function on each iteration 
-
 train_set = h.read_pixel_data(s.TRAIN_DATA, s.N_TRAIN_EXAMPLES, False)
 
 train_X, train_Y = h.parse_data(train_set, s.MAX_POSSIBLE_INPUT)
@@ -14,7 +12,7 @@ train_X, train_Y = h.parse_data(train_set, s.MAX_POSSIBLE_INPUT)
 # network with a input layer of 784, hidden layer of 40 and an output layer of 10 neurons
 # add the intercept (bias unit) to all the layers (except the output layer)
 s1 = 784 + 1
-s2 = 40 + 1
+s2 = 30 + 1
 s3 = 10
 layers = [s1, s2, s3]
 
@@ -47,7 +45,7 @@ if (optimize_theta.success): h.write_json_object(list(optimize_theta.x), s.BEST_
 
 # plot the evolution of the cost function with each iteration
 plt.figure(1)
-plt.plot(iter_cost)
+plt.plot(nn.iter_cost)
 plt.show()
 
 
