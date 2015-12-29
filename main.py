@@ -1,24 +1,20 @@
-from helpers import *
-from neural_net import *
+import helpers as h
+import neural_net as nn
 import numpy as np
 import scipy.optimize as sp
 import matplotlib.pyplot as plt
-
+import settings as s
 
 global iter_cost # stores the cost of the cost function on each iteration 
-global BEST_THETAS
-global TRAIN_DATA
-global N_TRAIN_EXAMPLES
-global MAX_POSSIBLE_INPUT
 
-train_set = read_pixel_data(TRAIN_DATA, N_TRAIN_EXAMPLES)
+train_set = h.read_pixel_data(s.TRAIN_DATA, s.N_TRAIN_EXAMPLES, False)
 
-train_X, train_Y = parse_data(train_set, MAX_POSSIBLE_INPUT)
+train_X, train_Y = h.parse_data(train_set, s.MAX_POSSIBLE_INPUT)
 
-# network with a input layer of 784, hidden layer of 15 and an output layer of 10 neurons
+# network with a input layer of 784, hidden layer of 40 and an output layer of 10 neurons
 # add the intercept (bias unit) to all the layers (except the output layer)
 s1 = 784 + 1
-s2 = 15 + 1
+s2 = 40 + 1
 s3 = 10
 layers = [s1, s2, s3]
 
@@ -37,7 +33,7 @@ thetas = []
 for i in range(N_LAYERS - 1):
 	thetas += list(Matrix_Thetas[i].flatten().reshape(-1,))
 
-optimize_theta = sp.minimize(net_cost_and_grad, 
+optimize_theta = sp.minimize(nn.net_cost_and_grad, 
 							 np.array(thetas), 
 							 (train_X, train_Y, LAMBDA, layers), 
 							 method='L-BFGS-B', 
@@ -46,9 +42,14 @@ optimize_theta = sp.minimize(net_cost_and_grad,
 
 print(optimize_theta)
 
-if (optimize_theta.success): write_data(list(optimize_theta.x), BEST_THETAS)
+# write the best parameters found to a file
+if (optimize_theta.success): h.write_json_object(list(optimize_theta.x), s.BEST_THETAS)
 
+# plot the evolution of the cost function with each iteration
+plt.figure(1)
 plt.plot(iter_cost)
+plt.show()
+
 
 
 
