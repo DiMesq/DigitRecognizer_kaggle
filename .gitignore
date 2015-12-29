@@ -1,5 +1,7 @@
 # my files
 iterate.dat
+train.csv
+test.csv
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
