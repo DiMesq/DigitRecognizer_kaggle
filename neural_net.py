@@ -107,6 +107,33 @@ def net_cost_and_grad(thetas, *args):
 	iter_cost.append(cost)
 	return cost, np.array(grad_out)	
 
+def use_net(thetas, layer_sizes, input):
+	''' thetas: list of floats, the net's weights
+	    n_layers: int, number of layers the neural net has
+	    input: ndarray of shape (785, 1), the input example to get the networks output'''
+
+	n_layers = len(layer_sizes)
+
+	# roll-up parameters (weights)
+	list_thetas = []
+	k = 0
+	for i in range(n_layers - 1):
+		l = layer_sizes[i]
+		j = layer_sizes[i+1]
+
+		list_thetas.append( np.array(thetas[k : k + l*j]).reshape(j, l))
+
+		k += l*j
+
+	activations = input.copy()
+
+	for theta in list_thetas:
+
+		activations = sigmoid(theta.dot(activations))
+
+	max_val = np.amax(activations)
+
+	return [i for i, j in enumerate(activations[:, 0]) if j == max_val][0]
 
 
 
