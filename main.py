@@ -12,7 +12,7 @@ train_X, train_Y = h.parse_data(train_set, s.MAX_POSSIBLE_INPUT)
 # network with a input layer of 784, hidden layer of 40 and an output layer of 10 neurons
 # add the intercept (bias unit) to all the layers (except the output layer)
 s1 = 784 + 1
-s2 = 30 + 1
+s2 = 15 + 1
 s3 = 10
 layers = [s1, s2, s3]
 
