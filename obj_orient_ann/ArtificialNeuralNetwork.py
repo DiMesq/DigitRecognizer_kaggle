@@ -32,6 +32,16 @@ class digit_recognizer_ANN:
 							- weight_initialize_treshold)
 			self.weights.append(layers_weight)
 
+	def train(self, input_pixels, label, learn_rate, regul_factor, batch_size, n_epochs):
+		''' input_pixels: (m,n) ndarray, training_examples - must be normalized to 0-1 range
+			label: (m,1) ndarray, expected output
+			learn_rate: float, gradient descent step size
+			regul_factor: float, regularization factor (prevents weights from getting to large)
+			batch_size: int, number of examples to take into account in each iteration of gradient descent
+			n_epochs: int, number of runs throuh the all of the examples
+
+			return: final cost'''
+			
 	def _cost_and_gradient(self, input_pixels, label, regul_factor):
 		''' inputs: same meaning as in train method
 			return: 2 element list, the cost and the gradient (the gradient unrolled)'''
@@ -69,6 +79,13 @@ class digit_recognizer_ANN:
 
 				nn_activations.append(layer_activations)
 
+			# vector of predictions produced by the network
+			pred_out = nn_activations[-1]
+
+			# add this example cost
+			cost += np.sum(y * log(pred_out) + (1-y) * log(1 - pred_out))
+
+			
 			
 
 
