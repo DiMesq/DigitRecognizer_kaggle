@@ -85,6 +85,21 @@ class digit_recognizer_ANN:
 			# add this example cost
 			cost += np.sum(y * log(pred_out) + (1-y) * log(1 - pred_out))
 
+			prev_layer_errors = pred_out - nn_activations
+			nn_layer_errors = [prev_layer_errors]
+
+			#compute the errors for every layer (backprop)
+			for l in range(n_layers - 2):
+
+				Theta = self.weights(-1 - l) 
+				layer_activations = nn_activations(-2 -l) 
+				sigmoid_derivative = layer_activations * (1 - layer_activations)
+
+				layer_errors = Theta.transpose().dot(prev_layer_errors) * sigmoid_derivative
+				
+				prev_layer_errors = layer_errors
+				nn_layer_errors = [layer_errors] + nn_layer_errors
+
 			
 			
 
