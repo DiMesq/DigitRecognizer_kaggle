@@ -25,9 +25,52 @@ class digit_recognizer_ANN:
 		# initialize neural net weights with some random values: -epsilon < value < epsilon
 		for i in range(n_layers-1):
 
-			layers_weight = (2 * np.random.randn(layers_sizes[i+1], layers_sizes[i]) 
+			# discard the bias unit from the front layer in the params size 
+			# (i.e. decrease the number of lines by 1)
+			layers_weight = (2 * np.random.randn(layers_sizes[i+1]-1, layers_sizes[i]) 
 							* weight_initialize_treshold 
 							- weight_initialize_treshold)
 			self.weights.append(layers_weight)
 
-	
+	def _cost_and_gradient(self, input_pixels, label, regul_factor):
+		''' inputs: same meaning as in train method
+			return: 2 element list, the cost and the gradient (the gradient unrolled)'''
+
+
+		m = input_pixels.shape[0]
+		n = input_pixels.shape[1] + 1 # +1 for the bias unit
+
+		# add the bias unit 
+		X = np.ones(m, n)
+		X[:, 1:] = input_pixels
+
+		n_layers = len(self.layers_sizes)
+
+		cost = 0
+
+		# go over all input examples
+		for i in range(m):
+
+			# get a specific example
+			Xi = X[i:i+1, :].transpose()
+
+			# get this example's expected vector output (1 in the place of the expected digit and 0 elsewhere)
+			y = np.array([1 if k == label[i] else 0 for k in range(10)]).reshape(10, 1)
+
+			# initialize list to store each layer's activation
+			nn_activations = [Xi]
+
+			# forward prop
+			for l in range(n_layers - 1):
+
+				# compute the next layer activations (adds the bias unit at the same time)
+				layer_activations = np.ones((self.layer_sizes[l+1], 1))
+				layer_activations[1:, :] = h.sigmoid(self.weights(l).dot(nn_activations(l)))
+
+				nn_activations.append(layer_activations)
+
+			
+
+
+
+
