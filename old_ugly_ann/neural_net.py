@@ -1,14 +1,11 @@
 from helpers import sigmoid
 import numpy as np	
 
-global iter_cost
-iter_cost = []
-
 
 def net_cost_and_grad(thetas, *args):
 	''' Returns the neural net cost and it's gradient for some parameter theta
 
-		theta: 1D vector, the parameters (unrolled) to the network 
+		thetas: 1D vector, the parameters (unrolled) to the network 
 		*args: - X -> m by 784 matrix of values between 0.0 and 1.0
 		       - Y -> 1D vector of size m, the expected output for the input x
 		       - regula -> float, regularization hyper-parameter
@@ -26,7 +23,7 @@ def net_cost_and_grad(thetas, *args):
 	m = X.shape[0] 
 	n_layers = len(layer_sizes)
 
-	# roll-up parameters (weights)
+	# roll-up parameters (weights) and create an array for the errors
 	list_thetas = []
 	list_deltas = []
 	k = 0
@@ -45,8 +42,8 @@ def net_cost_and_grad(thetas, *args):
 
 	for i in range(m):
 
-		activations = X[i: i+1].copy().transpose()
-		layer_outputs = [activations] 
+		activations = X[i:i+1, :].copy().transpose()
+		layer_outputs = [activations]
 
 		# foward prop
 		for Theta in list_thetas:
@@ -58,7 +55,7 @@ def net_cost_and_grad(thetas, *args):
 		output = layer_outputs[-1]
 
 		y = [0 if k != Y[i] else 1 for k in range(10)] # make the Y(i) vector
-		y = np.array(y).reshape(10, 1)
+		y = np.array(y).reshape(10,1)
 
 		cost += np.sum( y * np.log(output) + (1 - y) * np.log(1 - output))
 
@@ -94,7 +91,7 @@ def net_cost_and_grad(thetas, *args):
 	# unroll parameters again
 	grad_out = []
 	for Dk in D:
-		grad_out += list(Dk.flatten().reshape(-1,))
+		grad_out += list(Dk.flatten())
 
 	# add the regularization term to the cost 
 	thetas_cost = 0
@@ -104,7 +101,6 @@ def net_cost_and_grad(thetas, *args):
 	cost = (-1 / m) * cost
 	cost += (regula / (2 * m)) * thetas_cost 
 
-	iter_cost.append(cost)
 	return cost, np.array(grad_out)	
 
 def use_net(thetas, layer_sizes, input):
@@ -134,6 +130,8 @@ def use_net(thetas, layer_sizes, input):
 	max_val = np.amax(activations)
 
 	return [i for i, j in enumerate(activations[:, 0]) if j == max_val][0]
+
+
 
 
 
