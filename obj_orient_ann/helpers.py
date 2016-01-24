@@ -3,7 +3,7 @@ import numpy as np
 import settings as s
 
 def sigmoid(z):
-	return 1/(1 + exp(-z))
+	return 1/(1 + np.exp(-z))
 
 def read_pixels(filedir, n_rows, n_col, has_header, has_labels):
 	''' filedir: string, path to csv file. Each element in a row must correspond to the 
