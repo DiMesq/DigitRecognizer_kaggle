@@ -44,6 +44,18 @@ def read_pixels(filedir, n_rows, n_col, has_header, has_labels):
 
 		return data
 
+def split_data(data):
+	''' Splits the data into training examples and labels.
+
+		data: ndarray, first column is the labels in 0-9 range. The other 
+			  columns for every row have the pixels
+
+		returns : list, of two ndarrays with shapes (m, n) and (m,1) respectively.
+				  The first corresponds to the training pixels and the second to
+				  the labels -> [training_pixels, labels]'''
+
+	return [data[:, 1:], data[:, 0:1]]
+
 
 
 
