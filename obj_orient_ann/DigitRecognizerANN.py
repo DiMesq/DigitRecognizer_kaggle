@@ -59,7 +59,7 @@ class DigitRecognizerANN:
 		# add the bias unit 
 		X = np.ones((m, n))
 		X[:, 1:] = input_pixels
-		
+
 		n_layers = len(self.layers_sizes)
 
 		cost = 0
@@ -82,9 +82,14 @@ class DigitRecognizerANN:
 			# forward prop
 			for l in range(n_layers - 1):
 
-				# compute the next layer activations (adds the bias unit at the same time)
+				# compute the next layer activations (adds the bias unit at the same time 
+				# -> except for the last layer (!))
 				layer_activations = np.ones((self.layers_sizes[l+1], 1))
-				layer_activations[1:, :] = aux.sigmoid(self.weights[l].dot(nn_activations[l]))
+				
+				if l == n_layers - 2:
+					layer_activations = aux.sigmoid(self.weights[l].dot(nn_activations[l]))
+				else:
+					layer_activations[1:, :] = aux.sigmoid(self.weights[l].dot(nn_activations[l]))
 
 				nn_activations.append(layer_activations)
 
