@@ -20,7 +20,6 @@ class DigitRecognizerANN:
 
 		# add a node to every layer except the output layer - this will be used for the bias unit
 		self.layers_sizes = [lsiz+1 if k != n_layers - 1 else lsiz for k, lsiz in enumerate(layers_sizes)]
-		print(self.layers_sizes)
 		self.weights = []
 
 		# initialize neural net weights with some random values: -epsilon < value < epsilon
@@ -33,7 +32,6 @@ class DigitRecognizerANN:
 			layers_weight = (2 * np.random.randn(next_layer_size, self.layers_sizes[i]) 
 							* epsilon 
 							- epsilon)
-			print("i: " + str(i) + " | param shape: ", layers_weight.shape)
 			self.weights.append(layers_weight)
 
 	def train(self, input_pixels, label, learn_rate, regul_factor, batch_size, n_epochs):
@@ -97,20 +95,20 @@ class DigitRecognizerANN:
 			pred_out = nn_activations[-1]
 
 			# add this example cost
-			cost += np.sum(y * log(pred_out) + (1-y) * log(1 - pred_out))
+			cost += np.sum(y * np.log(pred_out) + (1-y) * np.log(1 - pred_out))
 
-			prev_layer_errors = pred_out - nn_activations
+			prev_layer_errors = pred_out - y
 			nn_layer_errors = [prev_layer_errors]
 
 			# compute the necessary changes for the last weights (the last Theta)
-			deltas[-1] += [prev_layer_errors.dot(nn_activations[-2].transpose())]
+			deltas[-1] += prev_layer_errors.dot(nn_activations[-2].transpose())
 
 			# backprop
 			for l in range(n_layers - 2, 0, -1):
 
 				# back propagate the errors 
 				Theta = self.weights[l] 
-				this_layer_activations = nn_activations(l) 
+				this_layer_activations = nn_activations[l] 
 				sigmoid_derivative = layer_activations * (1 - layer_activations)
 
 				# discounts the bias unit from Theta when back propagating
