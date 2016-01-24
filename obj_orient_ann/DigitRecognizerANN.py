@@ -44,11 +44,11 @@ class DigitRecognizerANN:
 
 			return: final cost'''
 
-		return self._cost_and_gradient(input_pixels, label, regul_factor)
+		return self.cost_and_gradient(input_pixels, label, regul_factor)
 
 	def cost_and_gradient(self, input_pixels, label, regul_factor):
 		''' inputs: same meaning as in train method
-			return: 2 element list, the cost and the gradient (the gradient unrolled)'''
+			return: 2 element list, the cost and the gradient'''
 
 
 		m = input_pixels.shape[0]
@@ -128,7 +128,7 @@ class DigitRecognizerANN:
 			# add regularization
 			gradient = [gradient[i] + (regul_factor/m) * self.weights[i] for i in range(n_layers-1)]
 
-			return gradient
+			return cost, gradient
 
 		def get_params():
 			return self.weights
@@ -140,6 +140,22 @@ class DigitRecognizerANN:
 				params += list(Theta.flatten())
 
 			return params
+
+		def set_params(params):
+
+			self.weights = []
+			n_layers = len(self.layers_sizes)
+
+			position = 0
+			for l in range(n_layers - 1):
+
+				this_layer_size = self.layers_sizes[l]
+				next_layer_size = self.layers_sizes[l+1] - 1
+
+				relevant_params = params[position : position + this_layer_size * next_layer_size]
+
+				self.weights.append(relevant_params.reshape(next_layer_size, this_layer_size))
+		
 			
 
 			
