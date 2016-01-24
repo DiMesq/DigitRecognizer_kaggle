@@ -46,7 +46,7 @@ class DigitRecognizerANN:
 
 		return self._cost_and_gradient(input_pixels, label, regul_factor)
 
-	def _cost_and_gradient(self, input_pixels, label, regul_factor):
+	def cost_and_gradient(self, input_pixels, label, regul_factor):
 		''' inputs: same meaning as in train method
 			return: 2 element list, the cost and the gradient (the gradient unrolled)'''
 
@@ -130,7 +130,16 @@ class DigitRecognizerANN:
 
 			return gradient
 
-		
+		def get_params():
+			return self.weights
+
+		def get_unrolled_params():
+			params = []
+
+			for Theta in self.weights:
+				params += list(Theta.flatten())
+
+			return params
 			
 
 			
