@@ -19,17 +19,21 @@ class DigitRecognizerANN:
 		n_layers = len(layers_sizes)
 
 		# add a node to every layer except the output layer - this will be used for the bias unit
-		self.layers_sizes = [lsiz+1 for lsiz, k in enumerate(layers_sizes) if k != n_layers - 1]
+		self.layers_sizes = [lsiz+1 if k != n_layers - 1 else lsiz for k, lsiz in enumerate(layers_sizes)]
+		print(self.layers_sizes)
 		self.weights = []
 
 		# initialize neural net weights with some random values: -epsilon < value < epsilon
 		for i in range(n_layers-1):
 
 			# discard the bias unit from the front layer in the params size 
-			# (i.e. decrease the number of lines by 1)
-			layers_weight = (2 * np.random.randn(layers_sizes[i+1]-1, layers_sizes[i]) 
-							* weight_initialize_treshold 
-							- weight_initialize_treshold)
+			# (i.e. decrease the number of lines by 1) -> except for the last layer (!)
+			next_layer_size = (self.layers_sizes[i+1] if i == n_layers - 2 else 
+							   self.layers_sizes[i+1] - 1)  
+			layers_weight = (2 * np.random.randn(next_layer_size, self.layers_sizes[i]) 
+							* epsilon 
+							- epsilon)
+			print("i: " + str(i) + " | param shape: ", layers_weight.shape)
 			self.weights.append(layers_weight)
 
 	def train(self, input_pixels, label, learn_rate, regul_factor, batch_size, n_epochs):
@@ -42,6 +46,8 @@ class DigitRecognizerANN:
 
 			return: final cost'''
 
+		return self._cost_and_gradient(input_pixels, label, regul_factor)
+
 	def _cost_and_gradient(self, input_pixels, label, regul_factor):
 		''' inputs: same meaning as in train method
 			return: 2 element list, the cost and the gradient (the gradient unrolled)'''
@@ -51,9 +57,9 @@ class DigitRecognizerANN:
 		n = input_pixels.shape[1] + 1 # +1 for the bias unit
 
 		# add the bias unit 
-		X = np.ones(m, n)
+		X = np.ones((m, n))
 		X[:, 1:] = input_pixels
-
+		
 		n_layers = len(self.layers_sizes)
 
 		cost = 0
@@ -77,8 +83,8 @@ class DigitRecognizerANN:
 			for l in range(n_layers - 1):
 
 				# compute the next layer activations (adds the bias unit at the same time)
-				layer_activations = np.ones((self.layer_sizes[l+1], 1))
-				layer_activations[1:, :] = h.sigmoid(self.weights(l).dot(nn_activations(l)))
+				layer_activations = np.ones((self.layers_sizes[l+1], 1))
+				layer_activations[1:, :] = aux.sigmoid(self.weights[l].dot(nn_activations[l]))
 
 				nn_activations.append(layer_activations)
 
@@ -117,6 +123,7 @@ class DigitRecognizerANN:
 			# add regularization
 			gradient = [gradient(i) + (regul_factor/m) * self.weights(i) for i in range(n_layers-1)]
 
+			return grad
 			
 
 			
