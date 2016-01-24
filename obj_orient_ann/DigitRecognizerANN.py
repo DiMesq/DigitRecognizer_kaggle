@@ -108,11 +108,13 @@ class DigitRecognizerANN:
 
 				# back propagate the errors 
 				Theta = self.weights[l] 
-				this_layer_activations = nn_activations[l] 
-				sigmoid_derivative = layer_activations * (1 - layer_activations)
 
-				# discounts the bias unit from Theta when back propagating
-				layer_errors = Theta[1:,:].transpose().dot(prev_layer_errors) * sigmoid_derivative
+				# discount the bias unit from the activations when backprop errors
+				this_layer_activations = nn_activations[l][1:, :] 
+				sigmoid_derivative = this_layer_activations * (1 - this_layer_activations)
+
+				# discounts the bias unit from Theta when back propagating 
+				layer_errors = Theta[:,1:].transpose().dot(prev_layer_errors) * sigmoid_derivative
 				
 				prev_layer_errors = layer_errors
 				nn_layer_errors = [layer_errors] + nn_layer_errors
@@ -124,9 +126,11 @@ class DigitRecognizerANN:
 			# compute the final gradient
 			gradient = [(1/m) * Delta for Delta in deltas]
 			# add regularization
-			gradient = [gradient(i) + (regul_factor/m) * self.weights(i) for i in range(n_layers-1)]
+			gradient = [gradient[i] + (regul_factor/m) * self.weights[i] for i in range(n_layers-1)]
 
-			return grad
+			return gradient
+
+		
 			
 
 			
