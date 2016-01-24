@@ -1,8 +1,6 @@
-from math import exp
 import csv
 import numpy as np 
-
-MAX_PIXEL_VAL = 255
+import settings as s
 
 def sigmoid(z):
 	return 1/(1 + exp(-z))
@@ -30,7 +28,7 @@ def read_pixels(filedir, n_rows, n_col, has_header, has_labels):
 		reader = csv.reader(csvfile)
 
 		# skip header line
-		if has_header: reader.next()
+		if has_header: next(reader)
 
 		i = 0 #keeps track of which line we are in
 		for row in reader:
@@ -39,9 +37,15 @@ def read_pixels(filedir, n_rows, n_col, has_header, has_labels):
 			data[i, :] = [int(ele) for ele in row]
 
 			# normalize pixels to 0-1 range
-			data[i, 1:] /=  MAX_PIXEL_VAL if has_labels else data[i, :] /= MAX_PIXEL_VAL
+			if has_labels:
+				data[i, 1:] /= s.MAX_PIXEL_VAL
+			else: 
+				data[i, :] /= s.MAX_PIXEL_VAL
 
 		return data
+
+
+
 
 
 
