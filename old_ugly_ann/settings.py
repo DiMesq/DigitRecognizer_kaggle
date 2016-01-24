@@ -1,7 +1,7 @@
 
 BEST_THETAS = "net_weights.data"
-TRAIN_DATA = "train.csv"
-TEST_DATA = "test.csv"
+TRAIN_DATA = "../train.csv"
+TEST_DATA = "../test.csv"
 TEST_OUTPUT = "predictions2.out"
 
 N_TRAIN_EXAMPLES = 42000

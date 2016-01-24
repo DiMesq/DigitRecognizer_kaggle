@@ -37,7 +37,7 @@ def gradient_descent(func, thetas, learn_rate, batch_size, epochs, *args):
 
 			if cost < 0.1:
 				counter += 1
-				if counter > 10:
+				if counter > 20:
 					flag = True
 					break
 

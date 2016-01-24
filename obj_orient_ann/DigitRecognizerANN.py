@@ -1,7 +1,7 @@
 import numpy as np
 import helpers as aux
 
-class digit_recognizer_ANN:
+class DigitRecognizerANN:
 	''' ANN to recognize hand written digits
 
 		Uses a cross-entropy error cost function
@@ -19,7 +19,7 @@ class digit_recognizer_ANN:
 		n_layers = len(layers_sizes)
 
 		# add a node to every layer except the output layer - this will be used for the bias unit
-		self.layers_sizes = [x+1 for lsiz, k in enumerate(layers_sizes) if k != n_layers - 1]
+		self.layers_sizes = [lsiz+1 for lsiz, k in enumerate(layers_sizes) if k != n_layers - 1]
 		self.weights = []
 
 		# initialize neural net weights with some random values: -epsilon < value < epsilon
@@ -41,7 +41,7 @@ class digit_recognizer_ANN:
 			n_epochs: int, number of runs throuh the all of the examples
 
 			return: final cost'''
-			
+
 	def _cost_and_gradient(self, input_pixels, label, regul_factor):
 		''' inputs: same meaning as in train method
 			return: 2 element list, the cost and the gradient (the gradient unrolled)'''
@@ -57,6 +57,9 @@ class digit_recognizer_ANN:
 		n_layers = len(self.layers_sizes)
 
 		cost = 0
+
+		# init the list of arrays that will correspond to changes to the weights
+		deltas = [np.zeros(Theta.shape) for Theta in self.weights]
 
 		# go over all input examples
 		for i in range(m):
@@ -88,19 +91,34 @@ class digit_recognizer_ANN:
 			prev_layer_errors = pred_out - nn_activations
 			nn_layer_errors = [prev_layer_errors]
 
-			#compute the errors for every layer (backprop)
-			for l in range(n_layers - 2):
+			# compute the necessary changes for the last weights (the last Theta)
+			deltas[-1] += [prev_layer_errors.dot(nn_activations[-2].transpose())]
 
-				Theta = self.weights(-1 - l) 
-				layer_activations = nn_activations(-2 -l) 
+			# backprop
+			for l in range(n_layers - 2, 0, -1):
+
+				# back propagate the errors 
+				Theta = self.weights[l] 
+				this_layer_activations = nn_activations(l) 
 				sigmoid_derivative = layer_activations * (1 - layer_activations)
 
-				layer_errors = Theta.transpose().dot(prev_layer_errors) * sigmoid_derivative
+				# discounts the bias unit from Theta when back propagating
+				layer_errors = Theta[1:,:].transpose().dot(prev_layer_errors) * sigmoid_derivative
 				
 				prev_layer_errors = layer_errors
 				nn_layer_errors = [layer_errors] + nn_layer_errors
 
+				# compute the necessary changes in the weights
+				prev_layer_activations = nn_activations[l-1]
+				deltas[l-1] += prev_layer_errors.dot(prev_layer_activations.transpose())
+
+			# compute the final gradient
+			gradient = [(1/m) * Delta for Delta in deltas]
+			# add regularization
+			gradient = [gradient(i) + (regul_factor/m) * self.weights(i) for i in range(n_layers-1)]
+
 			
+
 			
 
 
