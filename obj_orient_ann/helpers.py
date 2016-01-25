@@ -57,6 +57,35 @@ def split_data(data):
 
 	return [data[:, 1:], data[:, 0:1]]
 
+def gradient_check(nn, X, Y, regul_factor):
+	''' Checks if the gradient calculation is correct for a given ann.
+		Use for debugging purposes
+
+		nn: ArtificialNeuralNetwork class
+		returns: boolean, True if the neural nets gradient computation is correct. False otherwise'''
+
+	# get the nets parameters unrolled
+	params = nn.get_unrolled_params()
+
+	#compute the numerical aproximation of the gradient
+	grad_aprox = gradient_numerical_aproximation(nn, params, X, Y, regul_factor)
+
+	# get the neural network computed gradient
+	[c, nn_grad] = nn.cost_and_gradient(X, Y, regul_factor)
+
+	#unroll the net computed gradient
+	nn_grad_unrolled = []
+	for D in nn_grad:
+		nn_grad_unrolled += list(D.flatten())
+
+	nn_grad_unrolled = np.array(nn_grad_unrolled)
+
+	# check if the numerical aproximation and the gradient from backprop are similar
+	r = np.linalg.norm(nn_grad_unrolled - grad_aprox) / np.linalg.norm(nn_grad_unrolled + grad_aprox)
+
+	# check if the gradients are similar
+	print("result: ", r)
+	return r<10**(-5)
 
 def gradient_numerical_aproximation(obj, params, *args):
 	''' Computes a numerical aproximation of the gradient of the objective 
