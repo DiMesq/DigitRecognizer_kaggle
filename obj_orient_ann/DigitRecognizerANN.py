@@ -150,6 +150,11 @@ class DigitRecognizerANN:
 
 			params: list, unrolled params'''
 
+		if self.n_params != len(params): 
+			print("Warning: params not set because number of params introduced"
+				   "doesn't match the nets number of params")
+			return 
+
 		self.weights = []
 		n_layers = len(self.layers_sizes)
 
