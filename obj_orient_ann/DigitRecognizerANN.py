@@ -1,5 +1,6 @@
 import numpy as np
 import helpers as aux
+from math import sqrt
 
 class DigitRecognizerANN:
 	''' ANN to recognize hand written digits
@@ -8,13 +9,11 @@ class DigitRecognizerANN:
 
 		Note: m is used to refer to the number of examples and n to the number of features (= number of pixels)'''
 
-	def __init__(self, layers_sizes, epsilon):
+	def __init__(self, layers_sizes):
 		''' layers_sizes: list, with each element being one layer size by order.
 						  For e.g. a nn with 700 input layer; a hidden layer 
 						  with 20 nodes; an 10 node output layer, would be [700, 20, 10]
-						  Note: last layer must be of 10 nodes to match the number of digits
-			epsilon: used to define the range of possible random values to initialize the nn. 
-					 Concretely the init values belong to [-epsilon; +epsilon] '''
+						  Note: last layer must be of 10 nodes to match the number of digits'''
 
 		n_layers = len(layers_sizes)
 
@@ -30,6 +29,9 @@ class DigitRecognizerANN:
 			# (i.e. decrease the number of lines by 1) -> except for the last layer (!)
 			next_layer_size = (self.layers_sizes[i+1] if i == n_layers - 2 else 
 							   self.layers_sizes[i+1] - 1)  
+
+			epsilon = DigitRecognizerANN._get_epsilon(next_layer_size, self.layers_sizes[i])
+
 			layers_weight = (2 * np.random.randn(next_layer_size, self.layers_sizes[i]) 
 							* epsilon 
 							- epsilon)
@@ -38,7 +40,7 @@ class DigitRecognizerANN:
 			self.n_params += next_layer_size * self.layers_sizes[i]
 
 	@staticmethod
-	def _get_epsilon(self, Lin, Lout):
+	def _get_epsilon(Lin, Lout):
 		''' Gets a good epsilon to define the range of the initial values for the nn's params'''
 		return sqrt(6) / sqrt(Lin + Lout)
 
