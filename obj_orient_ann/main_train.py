@@ -2,7 +2,7 @@ import helpers as h
 import settings as s
 import DigitRecognizerANN as ann
 
-layers_sizes = [s.N_PIXELS_PER_IMAGE, 5, 10]
+layers_sizes = [s.N_PIXELS_PER_IMAGE, 100, 10]
 
 nn1 = ann.DigitRecognizerANN(layers_sizes)
 
@@ -11,6 +11,8 @@ data = h.read_pixels(s.TRAIN_DATA, s.N_TRAIN_EXAMPLES, s.N_PIXELS_PER_IMAGE + 1,
 
 [train_data, train_labels] = h.split_data(data)
 
-print(h.gradient_check(nn1, train_data[13500:13600,:], train_labels[13500:13600,:], s.REGUL_FACTOR))
+nn1.train(train_data, train_labels, s.LEARN_RATE, s.REGUL_FACTOR, s.BATCH_SIZE, s.MAX_EPOCHS)
+
+h.write_json_object(nn1.get_unrolled_params())
 
 

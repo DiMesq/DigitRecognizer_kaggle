@@ -1,8 +1,8 @@
 # hyper param and such
-REGUL_FACTOR = 10**(-3)	
+REGUL_FACTOR = 0.5
 LEARN_RATE = 0.1
 BATCH_SIZE = 30
-MAX_EPOCHS = 20
+MAX_EPOCHS = 10
 
 # in data filenames
 TRAIN_DATA = '../train.csv'

@@ -1,6 +1,7 @@
 import csv
 import numpy as np 
 import settings as s
+import json
 
 
 def sigmoid(z):
@@ -131,6 +132,23 @@ def gradient_numerical_aproximation(obj, params, *args):
 	obj.set_params(params)
 
 	return np.array(grad_aprox)
+
+def read_json_object(filename):
+
+	with open(filename, mode='r', encoding='utf-8') as f:
+		data = json.load(f)
+
+	return data
+
+def write_json_object(data, filename):
+	''' serializes the data as a json object in the file filename
+
+		data: list or dictionary
+		filename: str, name of the file where to store the data'''
+
+	with open(filename, mode='w', encoding='utf-8') as f:
+		json.dump(data, f)
+
 
 	
 
