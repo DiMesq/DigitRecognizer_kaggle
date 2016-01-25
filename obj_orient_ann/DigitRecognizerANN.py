@@ -43,37 +43,6 @@ class DigitRecognizerANN:
 		''' Gets a good epsilon to define the range of the initial values for the nn's params'''
 		return sqrt(6) / sqrt(Lin + Lout)
 
-	def train(self, X, Y, learn_rate, regul_factor, batch_size, max_epochs):
-		''' X: (m,n) ndarray, training_examples - must be normalized to 0-1 range
-			Y: (m,1) ndarray, expected output
-			learn_rate: float, gradient descent step size
-			regul_factor: float, regularization factor (prevents weights from getting to large)
-			batch_size: int, number of examples to take into account in each iteration of gradient descent
-			max_epochs: int, maximum number of runs through the all of the examples
-
-			return: final cost'''
-
-		n_examples = X.shape[0]
-		the_range = np.arange(n_examples)
-
-		n_layers = len(self.layers_sizes)
-
-		for epoch in range(max_epochs):
-
-			print("************ EPOCH " + str(epoch) + " *************")
-			# shuffle the examples order
-			np.random.shuffle(the_range)
-			X_temp = X[the_range]
-			Y_temp = Y[the_range]
-
-			for batch in range(0, n_examples, batch_size):
-				
-				[c , grad] = self.cost_and_gradient(X_temp[batch : batch+batch_size, :], 
-													Y_temp[batch : batch+batch_size, :], 
-													regul_factor)
-				print("epoch: " + str(epoch) + " | batch: " + str(batch) + " | cost: ", c)
-				self.weights = [self.weights[i] - learn_rate * grad[i] for i in range(n_layers-1)]
-
 
 	def cost_and_gradient(self, X, Y, regul_factor):
 		''' X: (m,n) ndarray, training_examples - must be normalized to 0-1 range
@@ -165,6 +134,65 @@ class DigitRecognizerANN:
 		cost += (regul_factor / (2*m)) * sum([np.sum(Theta[:, 1:]**2) for Theta in self.weights])
 
 		return cost, gradient
+
+
+	def train(self, X, Y, learn_rate, regul_factor, batch_size, max_epochs):
+		''' X: (m,n) ndarray, training_examples - must be normalized to 0-1 range
+			Y: (m,1) ndarray, expected output
+			learn_rate: float, gradient descent step size
+			regul_factor: float, regularization factor (prevents weights from getting to large)
+			batch_size: int, number of examples to take into account in each iteration of gradient descent
+			max_epochs: int, maximum number of runs through the all of the examples
+
+			return: final cost'''
+
+		n_examples = X.shape[0]
+		the_range = np.arange(n_examples)
+
+		n_layers = len(self.layers_sizes)
+
+		for epoch in range(max_epochs):
+
+			print("************ EPOCH " + str(epoch) + " *************")
+			# shuffle the examples order
+			np.random.shuffle(the_range)
+			X_temp = X[the_range]
+			Y_temp = Y[the_range]
+
+			for batch in range(0, n_examples, batch_size):
+				
+				[c , grad] = self.cost_and_gradient(X_temp[batch : batch+batch_size, :], 
+													Y_temp[batch : batch+batch_size, :], 
+													regul_factor)
+				print("epoch: " + str(epoch) + " | batch: " + str(batch) + " | cost: ", c)
+				self.weights = [self.weights[i] - learn_rate * grad[i] for i in range(n_layers-1)]
+
+	def predict(in_exmaple):
+		''' Uses the neural network to get the output for an input example
+			in_example: (n, 1) ndarray, the input example to get the net's prediction '''
+
+		initial_layer_size = in_example.shape[0] + 1 # + 1 for the bias unit
+		example = np.ones((initial_layer_size, 1))
+
+		example[1:, :] = in_example
+
+		n_layers = len(self.layers_sizes)
+		prev_activations = example
+		for l in range(n_layers-1):
+
+			Theta = self.weights[l]
+			this_layer_activations = np.ones((self.layers_sizes[l+1], 1))
+
+			if l == n_layers - 2:
+				this_layer_activations = aus.sigmoid(Theta.dot(prev_activations))
+			else:
+				this_layer_activations[1:, :] = aux.sigmoid(Theta.dot(prev_activations))
+
+			prev_activations = this_layer_activations
+
+		# return the last layer acrivations (= the output of the network)
+		return this_layer_activations
+
 
 	def get_params(self):
 		return self.weights

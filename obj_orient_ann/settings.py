@@ -10,7 +10,7 @@ TEST_DATA = '../test.csv'
 
 # output filenames
 MY_TEST_OUTPUT = "predictions.out"
-BEST_THETAS = "net_weights.data"
+BEST_THETAS = "net_weights.json"
 
 # data info
 N_TRAIN_EXAMPLES = 42000
