@@ -132,6 +132,9 @@ class DigitRecognizerANN:
 			# add regularization
 			gradient = [gradient[i] + (regul_factor/m) * self.weights[i] for i in range(n_layers-1)]
 
+		# add regularization to the cost
+		cost += (regul_factor / (2*m)) * sum([np.sum(Theta**2) for Theta in self.weights])
+
 		return cost, gradient
 
 	def get_params(self):
