@@ -37,30 +37,37 @@ class DigitRecognizerANN:
 			self.weights.append(layers_weight)
 			self.n_params += next_layer_size * self.layers_sizes[i]
 
+	@staticmethod
+	def _get_epsilon(self, Lin, Lout):
+		''' Gets a good epsilon to define the range of the initial values for the nn's params'''
+		return sqrt(6) / sqrt(Lin + Lout)
 
-	def train(self, input_pixels, label, learn_rate, regul_factor, batch_size, n_epochs):
-		''' input_pixels: (m,n) ndarray, training_examples - must be normalized to 0-1 range
-			label: (m,1) ndarray, expected output
+	def train(self, X, Y, learn_rate, regul_factor, batch_size, n_epochs):
+		''' X: (m,n) ndarray, training_examples - must be normalized to 0-1 range
+			Y: (m,1) ndarray, expected output
 			learn_rate: float, gradient descent step size
 			regul_factor: float, regularization factor (prevents weights from getting to large)
 			batch_size: int, number of examples to take into account in each iteration of gradient descent
-			n_epochs: int, number of runs throuh the all of the examples
+			n_epochs: int, maximum number of runs through the all of the examples
 
 			return: final cost'''
 
-		return self.cost_and_gradient(input_pixels, label, regul_factor)
+		#for epoch in range(n_epochs):
 
-	def cost_and_gradient(self, input_pixels, label, regul_factor):
+
+		return self.cost_and_gradient(X, Y, regul_factor)
+
+	def cost_and_gradient(self, X, Y, regul_factor):
 		''' inputs: same meaning as in train method
 			return: 2 element list, the cost and the gradient'''
 
 
-		m = input_pixels.shape[0]
-		n = input_pixels.shape[1] + 1 # +1 for the bias unit
+		m = X.shape[0]
+		n = X.shape[1] + 1 # +1 for the bias unit
 
 		# add the bias unit 
-		X = np.ones((m, n))
-		X[:, 1:] = input_pixels
+		X_bias = np.ones((m, n))
+		X_bias[:, 1:] = X
 
 		n_layers = len(self.layers_sizes)
 
@@ -73,10 +80,10 @@ class DigitRecognizerANN:
 		for i in range(m):
 
 			# get a specific example
-			Xi = X[i:i+1, :].transpose()
+			Xi = X_bias[i:i+1, :].transpose()
 
 			# get this example's expected vector output (1 in the place of the expected digit and 0 elsewhere)
-			y = np.array([1 if k == label[i] else 0 for k in range(10)]).reshape(10, 1)
+			y = np.array([1 if k == Y[i] else 0 for k in range(10)]).reshape(10, 1)
 
 			# initialize list to store each layer's activation
 			nn_activations = [Xi]
@@ -128,12 +135,13 @@ class DigitRecognizerANN:
 				deltas[l-1] += prev_layer_errors.dot(prev_layer_activations.transpose())
 
 		# compute the final gradient
-		gradient = [(1/m) * Delta for Delta in deltas]
+		gradient = [(1/m) * delta for delta in deltas]
 		# add regularization
-		gradient = [gradient[i] + (regul_factor/m) * self.weights[i] for i in range(n_layers-1)]
+		for i in range(n_layers-1):
+			gradient[i][:, 1:] += regul_factor * self.weights[i][:, 1:]
 
 		# add regularization to the cost
-		cost += (regul_factor / (2*m)) * sum([np.sum(Theta**2) for Theta in self.weights])
+		cost += (regul_factor / (2*m)) * sum([np.sum(Theta[:, 1:]**2) for Theta in self.weights])
 
 		return cost, gradient
 
