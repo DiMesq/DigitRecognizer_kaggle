@@ -2,6 +2,7 @@ import csv
 import numpy as np 
 import settings as s
 
+
 def sigmoid(z):
 	return 1/(1 + np.exp(-z))
 
@@ -57,7 +58,50 @@ def split_data(data):
 	return [data[:, 1:], data[:, 0:1]]
 
 
+def gradient_numerical_aproximation(obj, params, *args):
+	''' Computes a numerical aproximation of the gradient of the objective 
+		function method of the object obj. Assumes this method is named 
+		"cost_and_gradient" and that the object obj has a setter for its 
+		parameters called "set_params" 
 
+		*args: arguments to the object's objective function method. '''
 
+	def modify_parameter(params, epsilon, index):
+		''' Modifies the input parameter in params[index] by epsilon and returns
+			the new parameters vector
 
+			params: list, list of parameters [x1, x2, ... , x_index, ... , xn]
+			epsilon: float, small float (positive or negative) -> ~10**(-4) 
+			returns: list, list of parameters modified in one input -> 
+					  [x1, x2, ... , x_index + epsilon, ..., xn] '''
+
+		params_out = params[:]
+		params_out[index] += epsilon
+		return params_out
+
+	epsilon = 10**(-4)
+
+	print("this: ", args[2])
+	# calculate the aproximation to the gradient
+	n = len(params)
+
+	grad_aprox = []
+	for i in range(n):
+		print("Iter " + str(i) + " of " + str(n))
+		params_mod = modify_parameter(params, epsilon, i)
+		obj.set_params(params_mod)
+		[cost1, g] = obj.cost_and_gradient(*args)
+
+		params_mod = modify_parameter(params, -epsilon, i)
+		obj.set_params(params_mod)
+		[cost2, g] = obj.cost_and_gradient(*args)
+
+		grad_aprox.append((cost1 - cost2) / (2*epsilon))
+
+	# set the objects params back to original
+	obj.set_params(params)
+
+	return np.array(grad_aprox)
+
+	
 

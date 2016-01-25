@@ -1,5 +1,4 @@
 # hyper param and such
-EPSILON = 10**(-4)
 REGUL_FACTOR = 10**(-3)	
 LEARN_RATE = 0.1
 BATCH_SIZE = 30
