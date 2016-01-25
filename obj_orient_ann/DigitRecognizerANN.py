@@ -127,10 +127,10 @@ class DigitRecognizerANN:
 				prev_layer_activations = nn_activations[l-1]
 				deltas[l-1] += prev_layer_errors.dot(prev_layer_activations.transpose())
 
-			# compute the final gradient
-			gradient = [(1/m) * Delta for Delta in deltas]
-			# add regularization
-			gradient = [gradient[i] + (regul_factor/m) * self.weights[i] for i in range(n_layers-1)]
+		# compute the final gradient
+		gradient = [(1/m) * Delta for Delta in deltas]
+		# add regularization
+		gradient = [gradient[i] + (regul_factor/m) * self.weights[i] for i in range(n_layers-1)]
 
 		# add regularization to the cost
 		cost += (regul_factor / (2*m)) * sum([np.sum(Theta**2) for Theta in self.weights])
