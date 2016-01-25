@@ -21,6 +21,7 @@ class DigitRecognizerANN:
 		# add a node to every layer except the output layer - this will be used for the bias unit
 		self.layers_sizes = [lsiz+1 if k != n_layers - 1 else lsiz for k, lsiz in enumerate(layers_sizes)]
 		self.weights = []
+		self.n_params = 0
 
 		# initialize neural net weights with some random values: -epsilon < value < epsilon
 		for i in range(n_layers-1):
@@ -32,7 +33,10 @@ class DigitRecognizerANN:
 			layers_weight = (2 * np.random.randn(next_layer_size, self.layers_sizes[i]) 
 							* epsilon 
 							- epsilon)
+
 			self.weights.append(layers_weight)
+			self.n_params += next_layer_size * self.layers_sizes[i]
+
 
 	def train(self, input_pixels, label, learn_rate, regul_factor, batch_size, n_epochs):
 		''' input_pixels: (m,n) ndarray, training_examples - must be normalized to 0-1 range
@@ -128,35 +132,41 @@ class DigitRecognizerANN:
 			# add regularization
 			gradient = [gradient[i] + (regul_factor/m) * self.weights[i] for i in range(n_layers-1)]
 
-			return cost, gradient
+		return cost, gradient
 
-		def get_params():
-			return self.weights
+	def get_params(self):
+		return self.weights
 
-		def get_unrolled_params():
-			params = []
+	def get_unrolled_params(self):
+		params = []
 
-			for Theta in self.weights:
-				params += list(Theta.flatten())
+		for Theta in self.weights:
+			params += list(Theta.flatten())
 
-			return params
+		return params
 
-		def set_params(params):
+	def set_params(self, params):
+		''' Sets the nets params.
 
-			self.weights = []
-			n_layers = len(self.layers_sizes)
+			params: list, unrolled params'''
 
-			position = 0
-			for l in range(n_layers - 1):
+		self.weights = []
+		n_layers = len(self.layers_sizes)
 
-				this_layer_size = self.layers_sizes[l]
-				next_layer_size = self.layers_sizes[l+1] - 1
+		position = 0
+		for l in range(n_layers - 1):
 
-				relevant_params = params[position : position + this_layer_size * next_layer_size]
+			this_layer_size = self.layers_sizes[l]
+			next_layer_size = self.layers_sizes[l+1] - 1 #discount bias unit
 
-				self.weights.append(relevant_params.reshape(next_layer_size, this_layer_size))
-		
-			
+			if l == n_layers - 2: next_layer_size += 1 # dont discount the bias unit from last layer
+
+			relevant_params = np.array(params[position : position + this_layer_size * next_layer_size])\
+								.reshape(next_layer_size, this_layer_size)
+
+			self.weights.append(relevant_params)
+
+			position += this_layer_size * next_layer_size
 
 			
 
