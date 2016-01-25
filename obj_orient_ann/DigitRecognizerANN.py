@@ -30,8 +30,7 @@ class DigitRecognizerANN:
 			next_layer_size = (self.layers_sizes[i+1] if i == n_layers - 2 else 
 							   self.layers_sizes[i+1] - 1)  
 
-			epsilon = DigitRecognizerANN._get_epsilon(next_layer_size, self.layers_sizes[i])
-
+			epsilon = DigitRecognizerANN._get_epsilon(self.layers_sizes[i], next_layer_size)
 			layers_weight = (2 * np.random.randn(next_layer_size, self.layers_sizes[i]) 
 							* epsilon 
 							- epsilon)
@@ -44,25 +43,44 @@ class DigitRecognizerANN:
 		''' Gets a good epsilon to define the range of the initial values for the nn's params'''
 		return sqrt(6) / sqrt(Lin + Lout)
 
-	def train(self, X, Y, learn_rate, regul_factor, batch_size, n_epochs):
+	def train(self, X, Y, learn_rate, regul_factor, batch_size, max_epochs):
 		''' X: (m,n) ndarray, training_examples - must be normalized to 0-1 range
 			Y: (m,1) ndarray, expected output
 			learn_rate: float, gradient descent step size
 			regul_factor: float, regularization factor (prevents weights from getting to large)
 			batch_size: int, number of examples to take into account in each iteration of gradient descent
-			n_epochs: int, maximum number of runs through the all of the examples
+			max_epochs: int, maximum number of runs through the all of the examples
 
 			return: final cost'''
 
-		#for epoch in range(n_epochs):
+		n_examples = X.shape[0]
+		the_range = np.arange(n_examples)
 
+		n_layers = len(self.layers_sizes)
 
-		return self.cost_and_gradient(X, Y, regul_factor)
+		for epoch in range(max_epochs):
+
+			print("************ EPOCH " + str(epoch) + " *************")
+			# shuffle the examples order
+			np.random.shuffle(the_range)
+			X_temp = X[the_range]
+			Y_temp = Y[the_range]
+
+			for batch in range(0, n_examples, batch_size):
+				
+				[c , grad] = self.cost_and_gradient(X_temp[batch : batch+batch_size, :], 
+													Y_temp[batch : batch+batch_size, :], 
+													regul_factor)
+				print("epoch: " + str(epoch) + " | batch: " + str(batch) + " | cost: ", c)
+				self.weights = [self.weights[i] - learn_rate * grad[i] for i in range(n_layers-1)]
+
 
 	def cost_and_gradient(self, X, Y, regul_factor):
-		''' inputs: same meaning as in train method
+		''' X: (m,n) ndarray, training_examples - must be normalized to 0-1 range
+			Y: (m,1) ndarray, expected output
+			regul_factor: float, regularization factor (prevents weights from getting to large)
+			
 			return: 2 element list, the cost and the gradient'''
-
 
 		m = X.shape[0]
 		n = X.shape[1] + 1 # +1 for the bias unit
