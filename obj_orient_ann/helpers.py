@@ -151,6 +151,16 @@ def write_json_object(data, filename):
 		json.dump(data, f)
 
 
+def write_predictions(data, filename):
+
+	with open(filename, 'w') as csvfile:
+		fieldnames = ['ImageId', 'Label']
+		writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+
+		writer.writeheader()
+
+		for i, prediction in enumerate(data):
+			writer.writerow({'ImageId': i+1, 'Label': prediction})
 
 
 	
