@@ -1,5 +1,4 @@
 import numpy as np
-import helpers as aux
 from math import sqrt
 
 class ArtificialNeuralNetwork:
@@ -45,6 +44,9 @@ class ArtificialNeuralNetwork:
 		''' Gets a good epsilon to define the range of the initial values for the nn's params'''
 		return sqrt(6) / sqrt(Lin + Lout)
 
+	@staticmethod
+	def _sigmoid(z):
+		return 1 / ( 1 + np.exp( -z ) )
 
 	def cost_and_gradient(self, X, Y, regul_factor):
 		''' X: (m,n) ndarray, training_examples - must be normalized to 0-1 range
@@ -87,9 +89,9 @@ class ArtificialNeuralNetwork:
 				layer_activations = np.ones((self.layers_sizes[l+1], 1))
 				
 				if l == n_layers - 2:
-					layer_activations = aux.sigmoid(self.weights[l].dot(nn_activations[l]))
+					layer_activations = ArtificialNeuralNetwork._sigmoid(self.weights[l].dot(nn_activations[l]))
 				else:
-					layer_activations[1:, :] = aux.sigmoid(self.weights[l].dot(nn_activations[l]))
+					layer_activations[1:, :] = ArtificialNeuralNetwork._sigmoid(self.weights[l].dot(nn_activations[l]))
 
 				nn_activations.append(layer_activations)
 
@@ -189,9 +191,9 @@ class ArtificialNeuralNetwork:
 			this_layer_activations = np.ones((self.layers_sizes[l+1], 1))
 
 			if l == n_layers - 2:
-				this_layer_activations = aux.sigmoid(Theta.dot(prev_activations))
+				this_layer_activations = ArtificialNeuralNetwork._sigmoid(Theta.dot(prev_activations))
 			else:
-				this_layer_activations[1:, :] = aux.sigmoid(Theta.dot(prev_activations))
+				this_layer_activations[1:, :] = ArtificialNeuralNetwork._sigmoid(Theta.dot(prev_activations))
 
 			prev_activations = this_layer_activations
 
