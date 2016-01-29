@@ -1,3 +1,14 @@
+# my files
+iterate.dat
+*.data
+train.csv
+test.csv
+*.out
+
+# json files
+*.json
+*.data
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
