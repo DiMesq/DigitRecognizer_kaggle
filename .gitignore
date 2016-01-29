@@ -3,10 +3,11 @@ iterate.dat
 *.data
 train.csv
 test.csv
-predictions.out
+*.out
 
 # json files
 *.json
+*.data
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

@@ -1,9 +1,9 @@
-
 BEST_THETAS = "net_weights.data"
-TRAIN_DATA = "../train.csv"
-TEST_DATA = "../test.csv"
-TEST_OUTPUT = "predictions2.out"
+TRAIN_DATA = '../train.csv'
+TEST_DATA = '../test.csv'
+MY_TEST_OUTPUT = "predictions2.out"
 
 N_TRAIN_EXAMPLES = 42000
 N_TEST_EXAMPLES = 28000
+N_PIXELS_PER_IMAGE = 784
 MAX_POSSIBLE_INPUT = 255

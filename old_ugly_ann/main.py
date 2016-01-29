@@ -52,7 +52,7 @@ predict = []
 for i in range(test_X.shape[0]):
 	predict.append(nn.use_net(b, layers, test_X[i:i+1, :].transpose()))
 
-h.write_predictions(predict, s.TEST_OUTPUT)
+h.write_predictions(predict, s.MY_TEST_OUTPUT)
 
 
 
