@@ -31,8 +31,8 @@ class DigitRecognizerANN:
 							   self.layers_sizes[i+1] - 1)  
 
 			epsilon = DigitRecognizerANN._get_epsilon(self.layers_sizes[i], next_layer_size)
-			layers_weight = (2 * np.random.randn(next_layer_size, self.layers_sizes[i]) 
-							* epsilon 
+			layers_weight = (2 * np.random.randn(next_layer_size, self.layers_sizes[i])
+							* epsilon
 							- epsilon)
 
 			self.weights.append(layers_weight)
@@ -167,9 +167,12 @@ class DigitRecognizerANN:
 				print("epoch: " + str(epoch) + " | batch: " + str(batch) + " | cost: ", c)
 				self.weights = [self.weights[i] - learn_rate * grad[i] for i in range(n_layers-1)]
 
-	def predict(in_exmaple):
+
+	def predict(self, in_example):
 		''' Uses the neural network to get the output for an input example
-			in_example: (n, 1) ndarray, the input example to get the net's prediction '''
+			in_example: (n, 1) ndarray, the input example to get the net's prediction 
+
+			returns: (last_layer_size, 1) ndarray, the neural networks output'''
 
 		initial_layer_size = in_example.shape[0] + 1 # + 1 for the bias unit
 		example = np.ones((initial_layer_size, 1))
@@ -184,7 +187,7 @@ class DigitRecognizerANN:
 			this_layer_activations = np.ones((self.layers_sizes[l+1], 1))
 
 			if l == n_layers - 2:
-				this_layer_activations = aus.sigmoid(Theta.dot(prev_activations))
+				this_layer_activations = aux.sigmoid(Theta.dot(prev_activations))
 			else:
 				this_layer_activations[1:, :] = aux.sigmoid(Theta.dot(prev_activations))
 
@@ -198,6 +201,7 @@ class DigitRecognizerANN:
 		return self.weights
 
 	def get_unrolled_params(self):
+		''' returns: list, of the neural net's parameters '''
 		params = []
 
 		for Theta in self.weights:
