@@ -2,9 +2,7 @@ import helpers as h
 import settings as s
 import DigitRecognizerANN as ann
 
-layers_sizes = [s.N_PIXELS_PER_IMAGE, 100, 10]
-
-nn1 = ann.DigitRecognizerANN(layers_sizes)
+nn1 = ann.DigitRecognizerANN(s.LAYERS_SIZES)
 
 # In the number of columns argument: the "+1" is to account for the labels column
 data = h.read_pixels(s.TRAIN_DATA, s.N_TRAIN_EXAMPLES, s.N_PIXELS_PER_IMAGE + 1, True, True)
@@ -13,6 +11,6 @@ data = h.read_pixels(s.TRAIN_DATA, s.N_TRAIN_EXAMPLES, s.N_PIXELS_PER_IMAGE + 1,
 
 nn1.train(train_data, train_labels, s.LEARN_RATE, s.REGUL_FACTOR, s.BATCH_SIZE, s.MAX_EPOCHS)
 
-h.write_json_object(nn1.get_unrolled_params())
+h.write_json_object(nn1.get_unrolled_params(), s.BEST_THETAS)
 
 
