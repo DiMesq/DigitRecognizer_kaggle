@@ -34,7 +34,6 @@ def read_pixels(filedir, n_rows, n_col, has_header, has_labels):
 
 		i = 0 #keeps track of which line we are in
 		for row in reader:
-
 			# read data
 			data[i, :] = [int(ele) for ele in row]
 
@@ -44,7 +43,9 @@ def read_pixels(filedir, n_rows, n_col, has_header, has_labels):
 			else: 
 				data[i, :] /= s.MAX_PIXEL_VAL
 
-		return data
+			i+=1
+
+	return data
 
 def split_data(data):
 	''' Splits the data into training examples and labels.
@@ -148,6 +149,8 @@ def write_json_object(data, filename):
 
 	with open(filename, mode='w', encoding='utf-8') as f:
 		json.dump(data, f)
+
+
 
 
 	
