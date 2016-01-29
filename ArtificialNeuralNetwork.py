@@ -2,12 +2,14 @@ import numpy as np
 import helpers as aux
 from math import sqrt
 
-class DigitRecognizerANN:
-	''' ANN to recognize hand written digits
+class ArtificialNeuralNetwork:
+	''' General purpose Artificial Neural Network.
 
-		Uses a cross-entropy error cost function
+		Neural network that can be trained and used to predict 'anything'.
 
-		Note: m is used to refer to the number of examples and n to the number of features (= number of pixels)'''
+		Uses a cross-entropy error cost function.
+
+		Note: throughout m is used to refer to the number of examples and n to the number of features (= number of pixels)'''
 
 	def __init__(self, layers_sizes):
 		''' layers_sizes: list, with each element being one layer size by order.
@@ -30,7 +32,7 @@ class DigitRecognizerANN:
 			next_layer_size = (self.layers_sizes[i+1] if i == n_layers - 2 else 
 							   self.layers_sizes[i+1] - 1)  
 
-			epsilon = DigitRecognizerANN._get_epsilon(self.layers_sizes[i], next_layer_size)
+			epsilon = ArtificialNeuralNetwork._get_epsilon(self.layers_sizes[i], next_layer_size)
 			layers_weight = (2 * np.random.randn(next_layer_size, self.layers_sizes[i])
 							* epsilon
 							- epsilon)

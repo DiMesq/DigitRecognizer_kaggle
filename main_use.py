@@ -1,12 +1,12 @@
 import json
 import helpers as h
 import settings as s
-import DigitRecognizerANN
+import ArtificialNeuralNetwork
 import numpy as np
 
 test_examples = h.read_pixels(s.TEST_DATA, s.N_TEST_EXAMPLES, s.N_PIXELS_PER_IMAGE, True, False)
 
-nn2 = DigitRecognizerANN.DigitRecognizerANN(s.LAYERS_SIZES)
+nn2 = ArtificialNeuralNetwork.ArtificialNeuralNetwork(s.LAYERS_SIZES)
 
 nn2.set_params(h.read_json_object(s.BEST_THETAS))
 

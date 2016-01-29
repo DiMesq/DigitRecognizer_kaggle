@@ -1,8 +1,8 @@
 import helpers as h
 import settings as s
-import DigitRecognizerANN as ann
+import ArtificialNeuralNetwork as ann
 
-nn1 = ann.DigitRecognizerANN(s.LAYERS_SIZES)
+nn1 = ann.ArtificialNeuralNetwork(s.LAYERS_SIZES)
 
 # In the number of columns argument: the "+1" is to account for the labels column
 data = h.read_pixels(s.TRAIN_DATA, s.N_TRAIN_EXAMPLES, s.N_PIXELS_PER_IMAGE + 1, True, True)
